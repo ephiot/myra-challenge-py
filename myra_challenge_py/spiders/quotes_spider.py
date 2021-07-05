@@ -3,12 +3,22 @@ import time;
 
 class QuotesSpider(scrapy.Spider):
     name = "quotes"
-    start_urls = [
-        'http://quotes.toscrape.com/page/1/',
-        'http://quotes.toscrape.com/page/2/',
-    ]
+    start_urls = ['http://quotes.toscrape.com/login']
 
     def parse(self, response):
+        yield scrapy.FormRequest.from_response(
+            response,
+            formdata={
+                'username': 'scrapy.bot',
+                'password': '4w3s0m3n3ss',
+            },
+            callback=self.parse_quotes,
+        )
+
+    def parse_quotes(self, response):
+        if not response.css('a[href="/logout"]').extract_first():
+            raise CloseSpider('Authentication Failed!')
+
         page = response.url.split("/")[-2]
         for quote in response.css('div.quote'):
             text = quote.css('span.text::text').get()
@@ -32,8 +42,9 @@ class QuotesSpider(scrapy.Spider):
                 'file': 'storage/txt/' + page + '_' + author.lower().replace(' ', '_') + '_' + str(time.time()) + '.txt'
             }
 
-        # page = response.url.split("/")[-2]
-        # filename = f'quotes-{page}.html'
-        # with open(filename, 'wb') as f:
-        #     f.write(response.body)
-        # self.log(f'Saved file {filename}')
+        next_page = response.css('li.next a::attr(href)').extract_first()
+        if next_page:
+            yield scrapy.Request(
+                url=response.urljoin(next_page),
+                callback=self.parse_quotes,
+            )
