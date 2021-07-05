@@ -63,8 +63,8 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'myra_challenge_py.pipelines.Quote2Txt': 0,
-    'myra_challenge_py.pipelines.Quote2Csv': 1,
+    'myra_challenge_py.pipelines.Quote2Txt': 300,
+    'myra_challenge_py.pipelines.Quote2Csv': 400,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

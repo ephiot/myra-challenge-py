@@ -29,7 +29,7 @@ class QuotesSpider(scrapy.Spider):
                 'tags': tags,
                 'page': page,
                 'rule': rule,
-                'file': 'storage/txt/' + page + '_' + author.lower().replace(' ', '_') + time.time() + '.txt'
+                'file': 'storage/txt/' + page + '_' + author.lower().replace(' ', '_') + '_' + str(time.time()) + '.txt'
             }
 
         # page = response.url.split("/")[-2]
